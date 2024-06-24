@@ -1,11 +1,34 @@
-const Track = ({ track }) => {
+import './Track.css';
+
+const Track = ({ track, onAdd, onRemove }) => {
+  const addTrack = () => {
+    onAdd(track);
+  };
+
+  const removeTrack = () => {
+    onRemove(track);
+  };
+
+  const renderAction = () => {
+    return (
+      <>
+        <button className='track-action' onClick={addTrack}>
+          +
+        </button>
+        <button className='track-action' onClick={removeTrack}>
+          -
+        </button>
+      </>
+    );
+  };
   return (
     <div className='track'>
       <div className='track-information'>
         <h4>{track.name}</h4>
-        <p>
+        <p className='track-artist'>
           {track.artist} | {track.album}
         </p>
+        {renderAction()}
       </div>
     </div>
   );

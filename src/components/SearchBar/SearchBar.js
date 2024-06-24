@@ -9,7 +9,6 @@ export const SearchBar = ({ search }) => {
   }, []);
 
   const handleSearch = useCallback(() => {
-    debugger;
     search(term);
   }, [search, term]);
 

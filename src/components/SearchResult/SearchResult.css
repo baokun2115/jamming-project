@@ -1,0 +1,10 @@
+.search-results {
+    color: white;
+}
+.search-results h2 {
+    margin-top: 0;
+}
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}

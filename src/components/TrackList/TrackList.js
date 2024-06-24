@@ -1,16 +1,15 @@
 import Track from '../Track/Track';
 import './TrackList.css';
 
-const TrackList = ({ tracks }) => {
+const TrackList = ({ tracks, onAdd }) => {
   return (
-    <>
-      <h2>Results</h2>
-      <div className='track-list'>
+    <div className='tracks'>
+      <div className='tracks-item'>
         {tracks.map((track) => (
-          <Track key={track.id} track={track} />
+          <Track key={track.id} track={track} onAdd={onAdd} />
         ))}
       </div>
-    </>
+    </div>
   );
 };
 export default TrackList;

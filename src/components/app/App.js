@@ -9,11 +9,13 @@ const App = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [playlistTrack, setPlaylistTrack] = useState([]);
   const [playlistName, setPlaylistName] = useState('New Playlist');
-
+  const [isLoading, setIsLoading] = useState(false);
   const search = useCallback(async (term) => {
     try {
+      setIsLoading(true);
       const results = await Spotify.search(term);
       setSearchResult(results);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +50,11 @@ const App = () => {
     <div className='app'>
       <SearchBar search={search} />
       <div className='main'>
-        <SearchResult searchResults={searchResult} onAdd={addTrack} />
+        <SearchResult
+          isLoading={isLoading}
+          searchResults={searchResult}
+          onAdd={addTrack}
+        />
         <Playlist
           playlistName={playlistName}
           playlistTrack={playlistTrack}

@@ -47,6 +47,34 @@ const Spotify = {
       })
       .catch((error) => console.error('Error fetching data:', error));
   },
+  savePlaylist(name, trackURIs) {
+    if (!name || trackURIs.length === 0) {
+      return;
+    }
+    const accessToken = Spotify.getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axios
+      .get('https://api.spotify.com/v1/me', { headers: headers })
+      .then((res) => {
+        const userId = res.data.id;
+        return axios
+          .post(
+            `https://api.spotify.com/v1/users/${userId}/playlists`,
+            { name: name },
+            { headers: headers }
+          )
+          .then((res) => {
+            const playlistId = res.data.id;
+            return axios.post(
+              `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+              { uris: trackURIs },
+              { headers: headers }
+            );
+          });
+      });
+  },
 };
 
 export default Spotify;

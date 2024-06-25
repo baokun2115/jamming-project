@@ -1,6 +1,12 @@
 .track {
     border-bottom: 1px solid #ccc; 
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.track button {
+    cursor: pointer;
 }
 .track-artist {
     opacity: 0.6;

@@ -8,6 +8,7 @@ import { SearchResult } from '../SearchResult/SearchResult';
 const App = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [playlistTrack, setPlaylistTrack] = useState([]);
+  const [playlistName, setPlaylistName] = useState('New Playlist');
 
   const search = useCallback(async (term) => {
     try {
@@ -18,8 +19,8 @@ const App = () => {
     }
   }, []);
 
-  const onNameChange = (name) => {
-    setPlaylistTrack(name);
+  const updatePlaylistName = (name) => {
+    setPlaylistName(name);
   };
 
   const addTrack = (track) => {
@@ -30,12 +31,32 @@ const App = () => {
       return [...prev, track];
     });
   };
+  const removeTrack = (track) => {
+    setPlaylistTrack((prev) => prev.filter((t) => t.id !== track.id));
+  };
+
+  const savePlaylist = () => {
+    alert(playlistName);
+    const trackURIs = playlistTrack.map((track) => track.uri);
+    Spotify.savePlaylist(playlistName, trackURIs).then(() => {
+      alert('Playlist saved');
+      setPlaylistTrack([]);
+      updatePlaylistName('New Playlist');
+    });
+  };
+
   return (
     <div className='App'>
       <SearchBar search={search} />
       <div className='main'>
         <SearchResult searchResults={searchResult} onAdd={addTrack} />
-        <Playlist playlistTrack={playlistTrack} onNameChange={onNameChange} />
+        <Playlist
+          playlistName={playlistName}
+          playlistTrack={playlistTrack}
+          onNameChange={updatePlaylistName}
+          onRemove={removeTrack}
+          onSave={savePlaylist}
+        />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import './Track.css';
 
-const Track = ({ track, onAdd, onRemove }) => {
+const Track = ({ track, onAdd, onRemove, isRemoval }) => {
   const addTrack = () => {
     onAdd(track);
   };
@@ -12,12 +12,16 @@ const Track = ({ track, onAdd, onRemove }) => {
   const renderAction = () => {
     return (
       <>
-        <button className='track-action' onClick={addTrack}>
-          +
-        </button>
-        <button className='track-action' onClick={removeTrack}>
-          -
-        </button>
+        {!isRemoval && (
+          <button className='track-action' onClick={addTrack}>
+            +
+          </button>
+        )}
+        {isRemoval && (
+          <button className='track-action' onClick={removeTrack}>
+            -
+          </button>
+        )}
       </>
     );
   };
@@ -28,8 +32,8 @@ const Track = ({ track, onAdd, onRemove }) => {
         <p className='track-artist'>
           {track.artist} | {track.album}
         </p>
-        {renderAction()}
       </div>
+      {renderAction()}
     </div>
   );
 };

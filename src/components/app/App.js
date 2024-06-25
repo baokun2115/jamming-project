@@ -31,22 +31,21 @@ const App = () => {
       return [...prev, track];
     });
   };
+
   const removeTrack = (track) => {
     setPlaylistTrack((prev) => prev.filter((t) => t.id !== track.id));
   };
 
   const savePlaylist = () => {
-    alert(playlistName);
     const trackURIs = playlistTrack.map((track) => track.uri);
     Spotify.savePlaylist(playlistName, trackURIs).then(() => {
-      alert('Playlist saved');
       setPlaylistTrack([]);
       updatePlaylistName('New Playlist');
     });
   };
 
   return (
-    <div className='App'>
+    <div className='app'>
       <SearchBar search={search} />
       <div className='main'>
         <SearchResult searchResults={searchResult} onAdd={addTrack} />

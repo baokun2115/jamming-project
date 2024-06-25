@@ -25,29 +25,38 @@ const Spotify = {
     }
   },
 
-  search(term) {
-    const accessToken = Spotify.getAccessToken();
-    return axios
-      .get(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((response) => {
-        if (!response.data.tracks) {
-          return [];
-        }
-        return response.data.tracks.items.map((track) => ({
-          id: track.id,
-          name: track.name,
-          artist: track.artists[0].name,
-          album: track.album.name,
-          uri: track.uri,
-        }));
-      })
-      .catch((error) => console.error('Error fetching data:', error));
+  mapTrack(tracks) {
+    return tracks.map((track) => ({
+      id: track.id,
+      name: track.name,
+      artist: track.artists[0].name,
+      album: track.album.name,
+      uri: track.uri,
+    }));
   },
-  savePlaylist(name, trackURIs) {
+
+  async search(term) {
+    const accessToken = Spotify.getAccessToken();
+    try {
+      const response = await axios.get(
+        `https://api.spotify.com/v1/search?type=track&q=${term}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!response.data.tracks) {
+        return [];
+      }
+      return this.mapTrack(response.data.tracks.items);
+    } catch (error) {
+      console.error('Error fetching data', error);
+      return [];
+    }
+  },
+
+  async savePlaylist(name, trackURIs) {
     if (!name || trackURIs.length === 0) {
       return;
     }
@@ -55,25 +64,25 @@ const Spotify = {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
-    return axios
-      .get('https://api.spotify.com/v1/me', { headers: headers })
-      .then((res) => {
-        const userId = res.data.id;
-        return axios
-          .post(
-            `https://api.spotify.com/v1/users/${userId}/playlists`,
-            { name: name },
-            { headers: headers }
-          )
-          .then((res) => {
-            const playlistId = res.data.id;
-            return axios.post(
-              `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-              { uris: trackURIs },
-              { headers: headers }
-            );
-          });
+    try {
+      const userResponse = await axios.get('https://api.spotify.com/v1/me', {
+        headers: headers,
       });
+      const userId = userResponse.data.id;
+      const playlistResponse = await axios.post(
+        `https://api.spotify.com/v1/users/${userId}/playlists`,
+        { name: name },
+        { headers: headers }
+      );
+      const playlistId = playlistResponse.data.id;
+      await axios.post(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        { uris: trackURIs },
+        { headers: headers }
+      );
+    } catch (error) {
+      console.error('Error creating playlist');
+    }
   },
 };
 
